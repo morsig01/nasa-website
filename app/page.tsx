@@ -1,5 +1,7 @@
-import Image from "next/image";
 import { getApod } from "./api/nasa/nasa.js";
+import { MediaContainer } from "@/components/molecules/MediaContainer";
+import { Title } from "@/components/atoms/Title";
+import { Text } from "@/components/atoms/Text";
 
 interface Apod {
   title: string;
@@ -8,33 +10,20 @@ interface Apod {
   explanation: string;
 }
 
-// Convert to async server component
 export default async function Home() {
-  // Fetch data with revalidation
   const apod: Apod = await getApod();
 
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-bold mb-4">{apod.title}</h1>
-      {apod.media_type === "image" ? (
-        <Image
-          src={apod.url}
-          alt={apod.title}
-          width={800}
-          height={600}
-          className="rounded shadow"
-        />
-      ) : (
-        <iframe
-          src={apod.url}
-          title={apod.title}
-          width="800"
-          height="450"
-          frameBorder="0"
-          allowFullScreen
-        ></iframe>
-      )}
-      <p className="mt-4 text-gray-700">{apod.explanation}</p>
+    <main className="min-h-screen flex flex-col">
+      <MediaContainer 
+        url={apod.url} 
+        title={apod.title} 
+        mediaType={apod.media_type}
+      />
+      <Title>{apod.title}</Title>
+      <section className="px-96 text-center mt-8">
+        <Text>{apod.explanation}</Text>
+      </section>
     </main>
   );
 }
