@@ -3,35 +3,55 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'apod.nasa.gov',
-        pathname: '/apod/image/**',
+        protocol: "https",
+        hostname: "apod.nasa.gov",
+        pathname: "/apod/image/**",
       },
       {
-        protocol: 'https',
-        hostname: 'www.nasa.gov',
-        pathname: '/sites/**',
+        protocol: "https",
+        hostname: "www.nasa.gov",
+        pathname: "/sites/**",
       },
       {
-        protocol: 'https',
-        hostname: '*.nasa.gov',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "*.nasa.gov",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'voyager.jpl.nasa.gov',
-        pathname: '/assets/**',
+        protocol: "https",
+        hostname: "voyager.jpl.nasa.gov",
+        pathname: "/assets/**",
       },
       {
-        protocol: 'https',
-        hostname: 'mars.nasa.gov',
-        pathname: '/system/**',
+        protocol: "https",
+        hostname: "mars.nasa.gov",
+        pathname: "/system/**",
       },
       {
-        protocol: 'https',
-        hostname: 'upload.wikimedia.org',
-        pathname: '/wikipedia/commons/**',
-      }
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+        pathname: "/wikipedia/commons/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images-assets.nasa.gov",
+        pathname: "/image/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images-api.nasa.gov",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "nasa.gov",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.nasa.gov",
+        pathname: "/**",
+      },
     ],
   },
 };
