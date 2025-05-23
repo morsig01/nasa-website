@@ -9,7 +9,7 @@ interface MediaContainerProps {
 
 export function MediaContainer({ url, title, mediaType }: MediaContainerProps) {
   return (
-    <section className="relative h-[calc(100vh-8rem)] overflow-hidden">
+    <section className="relative h-[80vh] overflow-hidden">
       {mediaType === "image" ? (
         <Image src={url} alt={title} />
       ) : (

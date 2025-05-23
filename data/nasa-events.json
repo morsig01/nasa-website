@@ -1,0 +1,80 @@
+[
+  {
+    "id": "nasa-founded",
+    "title": "NASA Founded",
+    "date": "1958-07-29",
+    "description": "The National Aeronautics and Space Administration (NASA) was established by the U.S. government to lead space exploration efforts.",
+    "media": {
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg"
+    },
+    "tags": ["founding", "history"],
+    "importance": 5
+  },
+  {
+    "id": "apollo11",
+    "title": "Apollo 11 Moon Landing",
+    "date": "1969-07-20",
+    "description": "Neil Armstrong and Buzz Aldrin became the first humans to walk on the Moon.",
+    "media": {
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Apollo_11_bootprint.jpg",
+      "video": "https://www.youtube.com/embed/cwZb2mqId0A"
+    },
+    "tags": ["apollo", "moon", "manned mission"],
+    "importance": 5
+  },
+  {
+    "id": "voyager1-launch",
+    "title": "Voyager 1 Launched",
+    "date": "1977-09-05",
+    "description": "Voyager 1 began its journey to explore the outer planets and is now the farthest human-made object from Earth.",
+    "media": {
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Voyager_spacecraft_model.png"
+    },
+    "tags": ["voyager", "deep space", "probe"],
+    "importance": 4
+  },
+  {
+    "id": "hubble-launch",
+    "title": "Hubble Space Telescope Launched",
+    "date": "1990-04-24",
+    "description": "Hubble was launched into orbit to capture high-resolution images of deep space, revolutionizing astronomy.",
+    "media": {
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/HST-SM4.jpeg/640px-HST-SM4.jpeg"
+    },
+    "tags": ["telescope", "astronomy", "earth orbit"],
+    "importance": 5
+  },
+  {
+    "id": "mars-rover-curiosity",
+    "title": "Curiosity Rover Lands on Mars",
+    "date": "2012-08-06",
+    "description": "NASA's Curiosity rover landed in Gale Crater to investigate Mars' climate and geology.",
+    "media": {
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4f/PIA16239_High-Resolution_Self-Portrait_by_Curiosity_Rover_Arm_Camera.jpg"
+    },
+    "tags": ["mars", "rover", "robotics"],
+    "importance": 4
+  },
+  {
+    "id": "james-webb-launch",
+    "title": "James Webb Space Telescope Launched",
+    "date": "2021-12-25",
+    "description": "The JWST launched to observe the universe in infrared and study the formation of galaxies, stars, and planets.",
+    "media": {
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/3f/James_Webb_Space_Telescope_2022_full_view.jpg"
+    },
+    "tags": ["telescope", "infrared", "deep space"],
+    "importance": 5
+  },
+  {
+    "id": "artemis-i-launch",
+    "title": "Artemis I Launch",
+    "date": "2022-11-16",
+    "description": "Artemis I was NASA's first mission to the Moon since Apollo, testing the SLS and Orion spacecraft.",
+    "media": {
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/38/Artemis_I_SLS_Launch_%28NHQ202211160027%29.jpg"
+    },
+    "tags": ["moon", "artemis", "sls"],
+    "importance": 4
+  }
+]
