@@ -52,6 +52,11 @@ const nextConfig = {
         hostname: "images.nasa.gov",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "https://upload.wikimedia.org",
+        pathname: "/wikipedia/commons/**",
+      },
     ],
   },
 };

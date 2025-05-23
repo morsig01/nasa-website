@@ -14,6 +14,7 @@ interface Apod {
 
 export default async function Home() {
   const apodData: Apod[] = await getApod();
+  const apod: Apod = apodData[0];
 
   return (
 
