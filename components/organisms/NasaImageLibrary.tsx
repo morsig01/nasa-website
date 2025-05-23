@@ -53,7 +53,7 @@ export default function NasaImageLibrary() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto pt-24"> {/* Added pt-24 for top padding */}
       <form onSubmit={handleSearch} className="mb-6">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

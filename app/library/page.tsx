@@ -1,15 +1,13 @@
-import Head from "next/head";
-import NasaImageLibrary from "@/components/organisms/NasaImageLibrary";
+import LibraryWrapper from '@/components/organisms/LibraryWrapper';
+
+export const metadata = {
+  title: 'NASA Image Library',
+};
 
 export default function LibraryPage() {
   return (
-    <>
-      <Head>
-        <title>NASA Image Library</title>
-      </Head>
-      <main className="min-h-screen p-6">
-        <NasaImageLibrary />
-      </main>
-    </>
+    <main className="min-h-screen p-6">
+      <LibraryWrapper />
+    </main>
   );
 }

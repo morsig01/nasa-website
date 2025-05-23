@@ -26,7 +26,7 @@ export default async function Home() {
           mediaType={apod.media_type}
         />
       ) : (
-        <div className="w-full min-h-[80vh] flex items-center justify-center bg-gray-100">
+        <div className="w-full min-h-[80vh] flex items-center justify-center">
           <Text>No Image Today</Text>
         </div>
       )}
