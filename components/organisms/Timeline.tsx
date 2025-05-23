@@ -6,9 +6,8 @@ export default function Timeline() {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  return (
-    <section className="max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">NASA Historical Timeline</h2>
+  return (    <section className="max-w-3xl mx-auto">
+      <h2 className="text-7xl font-bold p-20 text-center">NASA Historical Timeline</h2>
       <div>
         {sortedEvents.map(event => (
           <TimelineEventCard key={event.id} event={event} />

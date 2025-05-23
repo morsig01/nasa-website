@@ -1,6 +1,13 @@
-export async function getApod(count = 5) {
-  const response = await fetch(
-    `https://api.nasa.gov/planetary/apod?api_key=${process.env.NASA_API_KEY}&count=${count}`
-  );
-  return response.json();
+export async function getApod() {
+  const apiKey = process.env.NASA_API_KEY;
+  if (!apiKey) {
+    throw new Error("NASA_API_KEY is not configured. Please add it to .env.local");
+  }
+
+  const res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}`);
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error?.message || `Failed to fetch APOD data: ${res.status} ${res.statusText}`);
+  }
+  return res.json();
 }

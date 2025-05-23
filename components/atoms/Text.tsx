@@ -6,7 +6,7 @@ interface TextProps {
 export function Text({ children, className = '' }: TextProps) {
   return (
 
-    <p className="p-6 bg-black text-white rounded-xs shadow-md">
+    <p className="p-6">
       {children}
     </p>
   );
