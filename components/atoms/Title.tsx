@@ -1,11 +1,12 @@
 interface TitleProps {
-  children: React.ReactNode;
+  children: string;
+  className?: string;  // Make className optional
 }
 
-export function Title({ children }: TitleProps) {
+export const Title = ({ children, className = '' }: TitleProps) => {
   return (
-    <h1 className="bg-white text-black py-4 px-8 text-4xl font-bold text-center -mt-8 mx-auto max-w-2xl z-10 shadow">
+    <h1 className={`text-4xl font-bold ${className}`}>
       {children}
     </h1>
   );
-}
+};

@@ -5,6 +5,7 @@ import { Text } from "@/components/atoms/Text";
 import Timeline from "@/components/organisms/Timeline";
 
 interface Apod {
+  copyright: string;
   title: string;
   url?: string;
   media_type: 'image' | 'video';
@@ -12,9 +13,10 @@ interface Apod {
 }
 
 export default async function Home() {
-  const apod: Apod = await getApod();
+  const apodData: Apod[] = await getApod();
 
   return (
+
     <main className="min-h-screen flex flex-col">
       {apod.url ? (
         <MediaContainer 
