@@ -6,13 +6,14 @@ interface ImageProps {
 }
 
 export function Image({ src, alt }: ImageProps) {
-  return (
-    <NextImage
+  return (    <NextImage
       src={src}
       alt={alt}
       fill
       className="rounded-sm shadow object-cover"
+      sizes="100vw"
       priority
+      quality={100}
     />
   );
 }
