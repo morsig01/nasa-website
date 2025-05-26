@@ -8,7 +8,7 @@ export default function Timeline() {
 
   return (
     <section className="max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">NASA Historical Timeline</h2>
+      <h2 className="text-6xl font-bold mb-6">NASA Historical Timeline</h2>
       <div>
         {sortedEvents.map(event => (
           <TimelineEventCard key={event.id} event={event} />

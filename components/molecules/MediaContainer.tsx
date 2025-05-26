@@ -9,12 +9,14 @@ interface MediaContainerProps {
 
 export function MediaContainer({ url, title, mediaType }: MediaContainerProps) {
   return (
-    <section className="relative h-[80vh] overflow-hidden">
-      {mediaType === "image" ? (
-        <Image src={url} alt={title} />
-      ) : (
-        <Video src={url} title={title} />
-      )}
+    <section className="relative w-full h-[80vh]">
+      <div className="absolute inset-0 bg-black">
+        {mediaType === "image" ? (
+          <Image src={url} alt={title} />
+        ) : (
+          <Video src={url} title={title} />
+        )}
+      </div>
     </section>
   );
 }
