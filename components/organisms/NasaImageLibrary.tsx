@@ -87,7 +87,7 @@ export default function NasaImageLibrary() {
         <div className="text-center mt-6">
           <button
             onClick={showMore}
-            className="px-6 py-2 bg-neutral-800 text-white rounded-sm hover:bg-neutral-700"
+            className="px-6 py-2 bg-neutral-800 text-white rounded-xs hover:bg-neutral-700"
           >
             Show More
           </button>

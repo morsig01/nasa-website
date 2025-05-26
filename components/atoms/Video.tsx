@@ -8,7 +8,7 @@ export function Video({ src, title }: VideoProps) {
     <iframe
       src={src}
       title={title}
-      className="w-full h-full"
+      className="w-full h-full rounded-sm"
       frameBorder="0"
       allowFullScreen
     />

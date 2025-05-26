@@ -48,14 +48,13 @@ export default async function Home() {
             <Text className="text-white">No Image Available</Text>
           </div>
         )}
-        <div className="container mx-auto">
-          <div className="py-16 text-center">
+
+          <div className="h-[20vh] flex justify-center items-center text-center">
             <Title>{apod.title}</Title>
           </div>
-        </div>
       </section>
       <AnimatedSection className="container max-w-3xl mx-auto px-4 py-8">
-        <div className="bg-neutral-900 rounded-lg p-6">
+        <div className="bg-neutral-900 rounded-sm p-6">
           <Text className="text-lg leading-relaxed text-gray-200">{apod.explanation}</Text>
         </div>
       </AnimatedSection>
