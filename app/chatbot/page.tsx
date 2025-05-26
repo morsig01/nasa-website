@@ -4,22 +4,70 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { SendIcon } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function ChatbotPage() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const askQuestion = async () => {
-    if (!question.trim()) return;
+    if (!question.trim() || isLoading) return;
 
-    const res = await fetch("/api/chatbot", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
-    });
+    setIsLoading(true);
+    setAnswer("");
 
-    const data = await res.json();
-    setAnswer(data.answer);
+    try {
+      const response = await fetch("/api/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      if (!response.ok) throw new Error("Failed to get response");
+
+      // Clear the question input after successful response
+      setQuestion("");
+
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No reader available");
+
+      const decoder = new TextDecoder();
+      let currentAnswer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split("\n");
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const word = line.slice(6);
+            // Don't add the completion marker to the displayed text
+            if (word.trim() !== "complete") {
+              currentAnswer += word;
+              setAnswer(currentAnswer);
+            }
+          } else if (line.startsWith("event: error")) {
+            throw new Error("Error from server");
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setAnswer("Sorry, there was an error processing your request.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      askQuestion();
+    }
   };
 
   return (
@@ -33,16 +81,26 @@ export default function ChatbotPage() {
             placeholder="Ask anything about NASA, space exploration, astronomy..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={handleKeyPress}
             rows={4}
             className="resize-none"
           />
           <Button
             onClick={askQuestion}
             className="w-full sm:w-auto"
-            disabled={!question.trim()}
+            disabled={!question.trim() || isLoading}
           >
-            <SendIcon className="mr-2 h-4 w-4" />
-            Ask Question
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Thinking...
+              </>
+            ) : (
+              <>
+                <SendIcon className="mr-2 h-4 w-4" />
+                Ask Question
+              </>
+            )}
           </Button>
           {answer && (
             <div className="mt-6 rounded-lg bg-muted p-4">
