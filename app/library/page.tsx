@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function LibraryPage() {
   return (
-    <main className="min-h-screen p-6">
+    <main className="min-h-[90vh]">
       <LibraryWrapper />
     </main>
   );
