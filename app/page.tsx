@@ -35,7 +35,7 @@ export default async function Home() {
       </main>
     );
   }  return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen">
       <section className="w-full">
         {apod.url ? (
           <MediaContainer
