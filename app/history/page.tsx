@@ -1,14 +1,13 @@
-import Timeline from '@/components/organisms/Timeline'
-import React from 'react'
+import Timeline from "@/components/organisms/Timeline";
 
 const History = () => {
   return (
-    <>
-      <section className="flex-grow mt-46">
-          <Timeline />
+    <div className="container mx-auto relative min-h-screen">
+      <section className="flex-grow mt-[10vh] mb-10">
+        <Timeline />
       </section>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default History
+export default History;
