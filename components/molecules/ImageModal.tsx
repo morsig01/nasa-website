@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { X } from "lucide-react";
+import { Skeleton } from "../ui/skeleton";
+import { useState } from "react";
 
 interface ImageModalProps {
   src: string | null;
@@ -22,6 +24,7 @@ export function ImageModal({
   nasaId,
   onClose 
 }: ImageModalProps) {
+  const [isLoading, setIsLoading] = useState(true);
   if (!src) return null;
 
   return (
@@ -32,9 +35,9 @@ export function ImageModal({
         onClick={onClose}
       />
       {/* Window Container */}      
-      <div className="relative z-50 bg-background/75 backdrop-blur-[2px] rounded-sm shadow-2xl w-[95vw] max-w-[1200px] h-[85vh] max-h-[800px]">
+      <div className="relative z-50 bg-background/75 backdrop-blur-[2px] shadow-2xl w-[95vw] max-w-[1200px] h-[85vh] max-h-[800px]">
         {/* Window Title Bar */}
-        <div className="flex items-center justify-between bg-muted/95 px-4 py-2 rounded-t-lg border-b border-border">
+        <div className="flex items-center justify-between bg-muted/95 rounded-t-xs px-4 py-2 border-b border-border">
           <h3 className="font-medium text-foreground truncate max-w-[80%] md:max-w-[90%]" title={title || ""}>
             {title || "NASA Image"}
           </h3>
@@ -47,20 +50,28 @@ export function ImageModal({
         </div>
         
         {/* Image Container */}
-        <div className="relative flex-1 h-[calc(100%-11rem)] rounded-none overflow-hidden bg-muted/20">
+        <div className="relative flex-1 h-[calc(100%-11rem)] overflow-hidden bg-muted/20">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Skeleton className="w-full h-full" />
+            </div>
+          )}
           <Image
             src={src}
             alt={title || "NASA Image"}
             fill
-            className="object-contain p-4"
-            quality={100}
-            priority
+            className={`object-contain p-4 duration-700 ease-in-out ${
+              isLoading ? 'scale-110 blur-xl grayscale' : 'scale-100 blur-0 grayscale-0'
+            }`}
+            quality={85}
+            loading="eager"
+            onLoadingComplete={() => setIsLoading(false)}
             sizes="(max-width: 1200px) 95vw, 1200px"
           />
         </div>
 
         {/* Metadata Section */}
-        <div className="bg-muted/95 px-4 py-3 border-t border-border h-32 overflow-y-auto">
+        <div className="bg-muted/95 px-4 py-3 rounded-b-xs border-t border-border h-32 overflow-y-auto">
           {/* Description */}
           {description && (
             <p className="text-sm text-foreground/90 leading-relaxed mb-3">

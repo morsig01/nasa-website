@@ -15,30 +15,30 @@ interface NasaImage {
   nasaId?: string;
 }
 
-const PAGE_SIZE_INITIAL = 21;
+const PAGE_SIZE_INITIAL = 20;
 const PAGE_SIZE_INCREMENT = 12;
 
-export default function NasaImageLibrary() {
-  const [query, setQuery] = useState("");
+export default function NasaImageLibrary() {  const [query, setQuery] = useState("");
   const [images, setImages] = useState<NasaImage[]>([]);
-  const [allResults, setAllResults] = useState<NasaImage[]>([]);
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE_INITIAL);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [selectedImage, setSelectedImage] = useState<NasaImage | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     fetchImages();
   }, []);
-
   async function fetchImages(searchQuery: string = "") {
     setLoading(true);
-    setVisibleCount(PAGE_SIZE_INITIAL);
+    setPage(1);
+    setHasMore(true);
 
     try {
       const res = await fetch(
         `https://images-api.nasa.gov/search?q=${encodeURIComponent(
           searchQuery || "nasa"
-        )}&media_type=image`
+        )}&media_type=image&page=1&page_size=${PAGE_SIZE_INITIAL}`
       );
 
       if (!res.ok) {
@@ -47,6 +47,10 @@ export default function NasaImageLibrary() {
 
       const data = await res.json();
       const items = data.collection?.items || [];
+      
+      // Check if there are more pages
+      const totalHits = data.collection?.metadata?.total_hits || 0;
+      setHasMore(totalHits > PAGE_SIZE_INITIAL);
 
       const imageData = items
         .map((item: any) => {
@@ -72,8 +76,7 @@ export default function NasaImageLibrary() {
         })
         .filter((item: NasaImage) => Boolean(item.url));
 
-      setAllResults(imageData);
-      setImages(imageData.slice(0, PAGE_SIZE_INITIAL));
+      setImages(imageData);
     } catch (error) {
       console.error("Error fetching NASA images:", error);
     } finally {
@@ -84,12 +87,74 @@ export default function NasaImageLibrary() {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     fetchImages(query);
-  }
+  }  async function showMore() {
+    if (loadingMore || !hasMore) return; // Prevent multiple calls or if no more images
+    setLoadingMore(true);
+    const nextPage = page + 1;
 
-  function showMore() {
-    const nextCount = visibleCount + PAGE_SIZE_INCREMENT;
-    setVisibleCount(nextCount);
-    setImages(allResults.slice(0, nextCount));
+    try {
+      const res = await fetch(
+        `https://images-api.nasa.gov/search?q=${encodeURIComponent(
+          query || "nasa"
+        )}&media_type=image&page=${nextPage}&page_size=${PAGE_SIZE_INCREMENT}`
+      );
+
+      if (!res.ok) {
+        throw new Error(`NASA API responded with status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      const items = data.collection?.items || [];
+      
+      // Check if there are more pages
+      const totalHits = data.collection?.metadata?.total_hits || 0;
+      const totalLoaded = (nextPage - 1) * PAGE_SIZE_INITIAL + items.length;
+      setHasMore(totalHits > totalLoaded);
+
+      const newImages = items
+        .map((item: any) => {
+          const imageLink =
+            item.links?.find(
+              (link: any) =>
+                link.render === "image" && link.href.includes("~large")
+            ) ||
+            item.links?.find((link: any) => link.render === "image") ||
+            item.links?.[0];
+          const url = imageLink?.href;
+          const metadata = item.data?.[0] || {};
+
+          return {
+            url,
+            title: metadata.title || "Untitled NASA Image",
+            description: metadata.description,
+            dateCreated: metadata.date_created,
+            center: metadata.center,
+            keywords: metadata.keywords,
+            nasaId: metadata.nasa_id,
+          };
+        })
+        .filter((item: NasaImage) => Boolean(item.url));
+
+      setPage(nextPage);
+      setImages(prevImages => [...prevImages, ...newImages]);
+
+      // Preload images in background
+      await Promise.all(
+        newImages.map(
+          (image: NasaImage) =>
+            new Promise<void>((resolve) => {
+              const img = new window.Image();
+              img.onload = () => resolve();
+              img.onerror = () => resolve(); // Don't reject on error, just continue
+              img.src = image.url;
+            })
+        )
+      );
+    } catch (error) {
+      console.error('Error loading more images:', error);
+    } finally {
+      setLoadingMore(false);
+    }
   }
 
   function handleImageClick(image: NasaImage) {
@@ -132,13 +197,21 @@ export default function NasaImageLibrary() {
 
       {!loading && <ImageGrid images={images} onImageClick={handleImageClick} />}
 
-      {!loading && images.length < allResults.length && (
+      {!loading && hasMore && (
         <div className="text-center mt-6">
           <button
             onClick={showMore}
-            className="px-6 py-2 bg-neutral-800 text-white rounded-md hover:bg-neutral-700 transition-colors"
+            disabled={loadingMore}
+            className="px-6 py-2 bg-neutral-800 text-white rounded-xs hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
           >
-            Show More
+            {loadingMore ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Loading more...
+              </>
+            ) : (
+              "Show More"
+            )}
           </button>
         </div>
       )}
