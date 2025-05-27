@@ -3,6 +3,13 @@ import ImageCard from "./ImageCard";
 interface NasaImage {
   url: string;
   title: string;
+  description?: string;
+  dateCreated?: string;
+  center?: string;
+  photographer?: string;
+  location?: string;
+  keywords?: string[];
+  nasaId?: string;
 }
 
 interface ImageGridProps {
