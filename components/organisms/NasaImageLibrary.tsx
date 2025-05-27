@@ -3,16 +3,24 @@
 import { useState, useEffect } from "react";
 import ImageGrid from "../molecules/ImageGrid";
 import { Search, Loader2 } from "lucide-react";
+import { ImageModal } from "../molecules/ImageModal";
+import Image from "next/image";
+
+interface NasaImage {
+  url: string;
+  title: string;
+}
 
 const PAGE_SIZE_INITIAL = 21;
 const PAGE_SIZE_INCREMENT = 12;
 
 export default function NasaImageLibrary() {
   const [query, setQuery] = useState("");
-  const [images, setImages] = useState<string[]>([]);
-  const [allResults, setAllResults] = useState<string[]>([]);
+  const [images, setImages] = useState<NasaImage[]>([]);
+  const [allResults, setAllResults] = useState<NasaImage[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE_INITIAL);
   const [loading, setLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<NasaImage | null>(null);
 
   // Fetch default images on first render
   useEffect(() => {
@@ -23,22 +31,63 @@ export default function NasaImageLibrary() {
     setLoading(true);
     setVisibleCount(PAGE_SIZE_INITIAL);
 
-    const res = await fetch(
-      `https://images-api.nasa.gov/search?q=${encodeURIComponent(
-        searchQuery || "nasa"
-      )}&media_type=image`
-    );
+    try {
+      const res = await fetch(
+        `https://images-api.nasa.gov/search?q=${encodeURIComponent(
+          searchQuery || "nasa"
+        )}&media_type=image`
+      );
 
-    const data = await res.json();
-    const items = data.collection?.items || [];
+      if (!res.ok) {
+        throw new Error(`NASA API responded with status: ${res.status}`);
+      }
 
-    const imageUrls = items
-      .map((item: any) => item.links?.[0]?.href)
-      .filter(Boolean);
+      const data = await res.json();
+      console.log("Full NASA API Response:", data);
 
-    setAllResults(imageUrls);
-    setImages(imageUrls.slice(0, PAGE_SIZE_INITIAL));
-    setLoading(false);
+      const items = data.collection?.items || [];
+      console.log("Number of items received:", items.length);
+
+      const imageData = items
+        .map((item: any) => {
+          // Log the structure of each item
+          console.log("Item structure:", {
+            links: item.links,
+            data: item.data,
+          });
+
+          // Make sure we're getting the correct URL by checking all links
+          const imageLink =
+            item.links?.find(
+              (link: any) => link.render === "image" || link.href?.endsWith(".jpg")
+            ) || item.links?.[0];
+          const url = imageLink?.href;
+          const title = item.data?.[0]?.title || "Untitled NASA Image";
+
+          console.log("Processed item:", { url, title });
+          return { url, title };
+        })
+        .filter((item: NasaImage) => {
+          const isValid = Boolean(item.url);
+          if (!isValid) {
+            console.log("Filtered out item due to missing URL:", item);
+          }
+          return isValid;
+        });
+
+      console.log("Final processed images:", imageData);
+
+      if (imageData.length === 0) {
+        console.log("No valid images found in the response");
+      }
+
+      setAllResults(imageData);
+      setImages(imageData.slice(0, PAGE_SIZE_INITIAL));
+    } catch (error) {
+      console.error("Error fetching NASA images:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleSearch(e: React.FormEvent) {
@@ -52,8 +101,18 @@ export default function NasaImageLibrary() {
     setImages(allResults.slice(0, nextCount));
   }
 
+  function handleImageClick(image: NasaImage) {
+    setSelectedImage(image);
+  }
+
+  useEffect(() => {
+    if (selectedImage) {
+      console.log('Selected image for modal:', selectedImage);
+    }
+  }, [selectedImage]);
+
   return (
-    <div className="max-w-5xl mx-auto pt-24"> {/* Added pt-24 for top padding */}
+    <div className="max-w-5xl mx-auto pt-24">
       <form onSubmit={handleSearch} className="mb-6">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -81,7 +140,7 @@ export default function NasaImageLibrary() {
 
       {loading && <p className="text-center">Loading images...</p>}
 
-      {!loading && <ImageGrid images={images} />}
+      {!loading && <ImageGrid images={images} onImageClick={handleImageClick} />}
 
       {!loading && images.length < allResults.length && (
         <div className="text-center mt-6">
@@ -97,6 +156,15 @@ export default function NasaImageLibrary() {
       {!loading && images.length === 0 && (
         <p className="text-center text-red-500">No images found.</p>
       )}
+
+      <ImageModal
+        src={selectedImage?.url || null}
+        title={selectedImage?.title || null}
+        onClose={() => {
+          console.log('Closing modal');
+          setSelectedImage(null);
+        }}
+      />
     </div>
   );
 }
