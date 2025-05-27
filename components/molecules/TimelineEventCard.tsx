@@ -32,9 +32,8 @@ export default function TimelineEventCard({ event }: { event: Event }) {
         <div className="relative h-96 mb-4">
           <Video src={event.media.video} title={event.title} />
         </div>
-      )}
-      <div className="flex flex-wrap gap-2">
-        {event.tags.map(tag => (
+      )}      <div className="flex flex-wrap gap-2">
+        {event.tags.filter(tag => tag != null).map(tag => (
           <TagPill key={tag} tag={tag} />
         ))}
       </div>
