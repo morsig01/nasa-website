@@ -24,6 +24,7 @@ export default function NasaImageLibrary() {
   const [allResults, setAllResults] = useState<NasaImage[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE_INITIAL);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [selectedImage, setSelectedImage] = useState<NasaImage | null>(null);
 
   useEffect(() => {
@@ -84,12 +85,36 @@ export default function NasaImageLibrary() {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     fetchImages(query);
-  }
-
-  function showMore() {
+  }  async function showMore() {
+    if (loadingMore) return; // Prevent multiple simultaneous calls
+    setLoadingMore(true);
     const nextCount = visibleCount + PAGE_SIZE_INCREMENT;
-    setVisibleCount(nextCount);
-    setImages(allResults.slice(0, nextCount));
+
+    try {
+      const newImages = allResults.slice(visibleCount, nextCount);
+      
+      // Update the state immediately with new images
+      // They will be invisible until loaded due to ImageCard's opacity handling
+      setVisibleCount(nextCount);
+      setImages(prevImages => [...prevImages, ...newImages]);
+
+      // Load images in background
+      await Promise.all(
+        newImages.map(
+          (image) =>
+            new Promise<void>((resolve) => {
+              const img = new Image();
+              img.onload = () => resolve();
+              img.onerror = () => resolve(); // Don't reject on error, just continue
+              img.src = image.url;
+            })
+        )
+      );
+    } catch (error) {
+      console.error('Error loading more images:', error);
+    } finally {
+      setLoadingMore(false);
+    }
   }
 
   function handleImageClick(image: NasaImage) {
@@ -136,9 +161,17 @@ export default function NasaImageLibrary() {
         <div className="text-center mt-6">
           <button
             onClick={showMore}
-            className="px-6 py-2 bg-neutral-800 text-white rounded-md hover:bg-neutral-700 transition-colors"
+            disabled={loadingMore}
+            className="px-6 py-2 bg-neutral-800 text-white rounded-xs hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
           >
-            Show More
+            {loadingMore ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Loading more...
+              </>
+            ) : (
+              "Show More"
+            )}
           </button>
         </div>
       )}

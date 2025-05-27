@@ -22,7 +22,7 @@ export default function ImageGrid({ images, onImageClick }: ImageGridProps) {
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {images.map((image, idx) => (
         <ImageCard
-          key={idx}
+          key={`${image.url}-${idx}`}
           src={image.url}
           onClick={() => onImageClick(image)}
         />
