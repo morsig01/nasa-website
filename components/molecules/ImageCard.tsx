@@ -1,8 +1,16 @@
 import Image from "next/image";
 
-export default function ImageCard({ src }: { src: string }) {
+interface ImageCardProps {
+  src: string;
+  onClick?: () => void;
+}
+
+export default function ImageCard({ src, onClick }: ImageCardProps) {
   return (
-    <div className="rounded-md overflow-hidden shadow-sm">
+    <div
+      className="rounded-md overflow-hidden shadow-sm cursor-pointer transition-transform hover:scale-105"
+      onClick={onClick}
+    >
       <Image
         src={src}
         alt="NASA Media"
