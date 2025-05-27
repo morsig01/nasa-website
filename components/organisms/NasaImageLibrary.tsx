@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import ImageGrid from "../molecules/ImageGrid";
 import { Search, Loader2 } from "lucide-react";
 import { ImageModal } from "../molecules/ImageModal";
-import Image from "next/image";
 
 interface NasaImage {
   url: string;
@@ -27,7 +26,6 @@ export default function NasaImageLibrary() {
   const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<NasaImage | null>(null);
 
-  // Fetch default images on first render
   useEffect(() => {
     fetchImages();
   }, []);
@@ -48,29 +46,20 @@ export default function NasaImageLibrary() {
       }
 
       const data = await res.json();
-      console.log("Full NASA API Response:", data);
-
       const items = data.collection?.items || [];
-      console.log("Number of items received:", items.length);
 
       const imageData = items
         .map((item: any) => {
-          // Log the structure of each item
-          console.log("Item structure:", {
-            links: item.links,
-            data: item.data,
-          });          // Make sure we're getting the correct URL by checking all links          // Get the largest non-original image version
           const imageLink =
             item.links?.find(
-              (link: any) => link.render === "image" && link.href.includes("~large")
-            ) || 
-            item.links?.find(
-              (link: any) => link.render === "image"
+              (link: any) =>
+                link.render === "image" && link.href.includes("~large")
             ) ||
+            item.links?.find((link: any) => link.render === "image") ||
             item.links?.[0];
           const url = imageLink?.href;
           const metadata = item.data?.[0] || {};
-          
+
           return {
             url,
             title: metadata.title || "Untitled NASA Image",
@@ -78,22 +67,10 @@ export default function NasaImageLibrary() {
             dateCreated: metadata.date_created,
             center: metadata.center,
             keywords: metadata.keywords,
-            nasaId: metadata.nasa_id
+            nasaId: metadata.nasa_id,
           };
         })
-        .filter((item: NasaImage) => {
-          const isValid = Boolean(item.url);
-          if (!isValid) {
-            console.log("Filtered out item due to missing URL:", item);
-          }
-          return isValid;
-        });
-
-      console.log("Final processed images:", imageData);
-
-      if (imageData.length === 0) {
-        console.log("No valid images found in the response");
-      }
+        .filter((item: NasaImage) => Boolean(item.url));
 
       setAllResults(imageData);
       setImages(imageData.slice(0, PAGE_SIZE_INITIAL));
@@ -118,12 +95,6 @@ export default function NasaImageLibrary() {
   function handleImageClick(image: NasaImage) {
     setSelectedImage(image);
   }
-
-  useEffect(() => {
-    if (selectedImage) {
-      console.log('Selected image for modal:', selectedImage);
-    }
-  }, [selectedImage]);
 
   return (
     <div className="max-w-5xl mx-auto pt-24">
@@ -152,7 +123,12 @@ export default function NasaImageLibrary() {
         </div>
       </form>
 
-      {loading && <p className="text-center">Loading images...</p>}
+      {loading && (
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+          <p className="mt-2">Loading images...</p>
+        </div>
+      )}
 
       {!loading && <ImageGrid images={images} onImageClick={handleImageClick} />}
 
@@ -160,7 +136,7 @@ export default function NasaImageLibrary() {
         <div className="text-center mt-6">
           <button
             onClick={showMore}
-            className="px-6 py-2 bg-neutral-800 text-white rounded-xs hover:bg-neutral-700"
+            className="px-6 py-2 bg-neutral-800 text-white rounded-md hover:bg-neutral-700 transition-colors"
           >
             Show More
           </button>
@@ -169,19 +145,20 @@ export default function NasaImageLibrary() {
 
       {!loading && images.length === 0 && (
         <p className="text-center text-red-500">No images found.</p>
-      )}      <ImageModal
-        src={selectedImage?.url || null}
-        title={selectedImage?.title || null}
-        description={selectedImage?.description}
-        dateCreated={selectedImage?.dateCreated}
-        center={selectedImage?.center}
-        keywords={selectedImage?.keywords}
-        nasaId={selectedImage?.nasaId}
-        onClose={() => {
-          console.log('Closing modal');
-          setSelectedImage(null);
-        }}
-      />
+      )}
+
+      {selectedImage && (
+        <ImageModal
+          src={selectedImage.url}
+          title={selectedImage.title}
+          description={selectedImage.description}
+          dateCreated={selectedImage.dateCreated}
+          center={selectedImage.center}
+          keywords={selectedImage.keywords}
+          nasaId={selectedImage.nasaId}
+          onClose={() => setSelectedImage(null)}
+        />
+      )}
     </div>
   );
 }

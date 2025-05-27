@@ -6,8 +6,6 @@ interface NasaImage {
   description?: string;
   dateCreated?: string;
   center?: string;
-  photographer?: string;
-  location?: string;
   keywords?: string[];
   nasaId?: string;
 }
@@ -18,7 +16,7 @@ interface ImageGridProps {
 }
 
 export default function ImageGrid({ images, onImageClick }: ImageGridProps) {
-  if (!images.length) return <p>No results found.</p>;
+  if (!images.length) return null;
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
