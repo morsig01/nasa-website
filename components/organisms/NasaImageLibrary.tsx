@@ -9,6 +9,11 @@ import Image from "next/image";
 interface NasaImage {
   url: string;
   title: string;
+  description?: string;
+  dateCreated?: string;
+  center?: string;
+  keywords?: string[];
+  nasaId?: string;
 }
 
 const PAGE_SIZE_INITIAL = 21;
@@ -54,18 +59,27 @@ export default function NasaImageLibrary() {
           console.log("Item structure:", {
             links: item.links,
             data: item.data,
-          });
-
-          // Make sure we're getting the correct URL by checking all links
+          });          // Make sure we're getting the correct URL by checking all links          // Get the largest non-original image version
           const imageLink =
             item.links?.find(
-              (link: any) => link.render === "image" || link.href?.endsWith(".jpg")
-            ) || item.links?.[0];
+              (link: any) => link.render === "image" && link.href.includes("~large")
+            ) || 
+            item.links?.find(
+              (link: any) => link.render === "image"
+            ) ||
+            item.links?.[0];
           const url = imageLink?.href;
-          const title = item.data?.[0]?.title || "Untitled NASA Image";
-
-          console.log("Processed item:", { url, title });
-          return { url, title };
+          const metadata = item.data?.[0] || {};
+          
+          return {
+            url,
+            title: metadata.title || "Untitled NASA Image",
+            description: metadata.description,
+            dateCreated: metadata.date_created,
+            center: metadata.center,
+            keywords: metadata.keywords,
+            nasaId: metadata.nasa_id
+          };
         })
         .filter((item: NasaImage) => {
           const isValid = Boolean(item.url);
@@ -155,11 +169,14 @@ export default function NasaImageLibrary() {
 
       {!loading && images.length === 0 && (
         <p className="text-center text-red-500">No images found.</p>
-      )}
-
-      <ImageModal
+      )}      <ImageModal
         src={selectedImage?.url || null}
         title={selectedImage?.title || null}
+        description={selectedImage?.description}
+        dateCreated={selectedImage?.dateCreated}
+        center={selectedImage?.center}
+        keywords={selectedImage?.keywords}
+        nasaId={selectedImage?.nasaId}
         onClose={() => {
           console.log('Closing modal');
           setSelectedImage(null);
