@@ -35,8 +35,11 @@ export default {
       fields: [
         {
           name: 'image',
-          title: 'Image URL',
-          type: 'url'
+          title: 'Image',
+          type: 'image', // Allow image upload/paste
+          options: {
+            hotspot: true
+          }
         },
         {
           name: 'video',

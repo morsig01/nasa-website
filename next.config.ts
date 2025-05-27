@@ -19,44 +19,9 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "voyager.jpl.nasa.gov",
-        pathname: "/assets/**",
-      },
-      {
-        protocol: "https",
-        hostname: "mars.nasa.gov",
-        pathname: "/system/**",
-      },
-      {
-        protocol: "https",
-        hostname: "upload.wikimedia.org",
-        pathname: "/wikipedia/commons/**",
-      },
-      {
-        protocol: "https",
-        hostname: "images-assets.nasa.gov",
-        pathname: "/image/**",
-      },
-      {
-        protocol: "https",
-        hostname: "images-api.nasa.gov",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "nasa.gov",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "images.nasa.gov",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "https://upload.wikimedia.org",
-        pathname: "/wikipedia/commons/**",
-      },
+        hostname: "cdn.sanity.io",
+        pathname: "/images/**",
+      }
     ],
   },
 };

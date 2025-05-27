@@ -8,6 +8,8 @@ interface NasaEvent {
   date: string;
   description: string;
   media: {
+    video: string | undefined;
+    image(image: any): unknown;
     _type: string;
     asset: {
       _ref: string;
@@ -43,8 +45,11 @@ export default async function Timeline() {
             event={{
               ...event,
               media: {
-                image: event.media._type === 'image' ? urlFor(event.media).url() : undefined,
-                video: event.media._type === 'video' ? event.media.asset._ref : undefined
+                image:
+                  event.media?.image && typeof event.media.image === "object" && "asset" in event.media.image
+                    ? urlFor(event.media.image).url()
+                    : undefined,
+                video: event.media?.video
               }
             }} 
           />
